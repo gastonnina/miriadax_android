@@ -9,19 +9,20 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class Asteroides extends Activity {
-	private Button bAcercaDe;
-	
+
+    private Button bAcercaDe;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        bAcercaDe =(Button) findViewById(R.id.Button03);
+
+        bAcercaDe = (Button) findViewById(R.id.Button03);
         bAcercaDe.setOnClickListener(new OnClickListener() {
-        	public void onClick(View view) {
-    			lanzarAcercaDe(null);
-        	}
-       });
+            public void onClick(View view) {
+                lanzarAcercaDe(null);
+            }
+        });
     }
 
     @Override
@@ -30,9 +31,9 @@ public class Asteroides extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    
-    public void lanzarAcercaDe(View view){
-        Intent i = new Intent(this,AcercaDe.class);
+
+    public void lanzarAcercaDe(View view) {
+        Intent i = new Intent(this, AcercaDe.class);
         startActivity(i);
     }
 }

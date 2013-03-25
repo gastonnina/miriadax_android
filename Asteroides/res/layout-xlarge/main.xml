@@ -36,6 +36,7 @@
 
             <Button android:id="@+id/Button03"
               style="@style/TextoAsteroides.Botones"
+              android:onClick="lanzarAcercaDe"
               android:text="@string/Acercade"/>
 
             <Button android:id="@+id/Button04"

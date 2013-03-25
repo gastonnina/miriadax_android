@@ -9,5 +9,6 @@
     <string name="hello">Hello World, Asteroides! </string>
     <string name="app_name">Asteroides</string>
     <string name="menu_settings">Settings</string>
+    <string name="Configuración">Configuración</string>
     
 </resources>

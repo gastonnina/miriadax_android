@@ -10,7 +10,7 @@ import android.widget.Button;
 
 public class Asteroides extends Activity {
 
-    private Button bAcercaDe;
+    private Button bAcercaDe,bSalir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +21,12 @@ public class Asteroides extends Activity {
         bAcercaDe.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 lanzarAcercaDe(null);
+            }
+        });
+        bSalir = (Button) findViewById(R.id.Button04);
+        bSalir.setOnClickListener(new OnClickListener() {
+            public void onClick(View view) {
+                finish();
             }
         });
     }

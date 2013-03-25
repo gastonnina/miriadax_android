@@ -29,7 +29,6 @@
     <Button android:id="@+id/Button03"
           android:layout_height="wrap_content"
           android:layout_width="fill_parent"
-
           android:text="@string/Acercade"/>
 
     <Button android:id="@+id/Button04"

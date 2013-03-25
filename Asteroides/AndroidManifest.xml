@@ -23,7 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:label="@string/Acercade" android:name="AcercaDe" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:label="@string/Acercade" android:name="AcercaDe" android:theme="@android:style/Theme.Dialog">
+        </activity>
+        <activity android:label="@string/Preferencias" android:name="Preferencias" android:theme="@android:style/Theme.Dialog">
+        </activity>
     </application>
 
 </manifest>

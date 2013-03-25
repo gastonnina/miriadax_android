@@ -12,13 +12,20 @@ import android.widget.Button;
 
 public class Asteroides extends Activity {
 
-    private Button bAcercaDe, bSalir;
+    private Button bAcercaDe, bSalir, bPreferencias;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
+        
+        bPreferencias = (Button) findViewById(R.id.Button02);
+        bPreferencias.setOnClickListener(new OnClickListener() {
+            public void onClick(View view) {
+                lanzarPreferencias(null);
+            }
+        });
+        
         bAcercaDe = (Button) findViewById(R.id.Button03);
         bAcercaDe.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
@@ -45,13 +52,12 @@ public class Asteroides extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-
+        	case R.id.config:
+        		lanzarPreferencias(null);
+            break;
             case R.id.acercaDe:
-
                 lanzarAcercaDe(null);
-
                 break;
-
         }
 
         return true;
@@ -62,6 +68,10 @@ public class Asteroides extends Activity {
 
     public void lanzarAcercaDe(View view) {
         Intent i = new Intent(this, AcercaDe.class);
+        startActivity(i);
+    }
+    public void lanzarPreferencias(View view) {
+        Intent i = new Intent(this, Preferencias.class);
         startActivity(i);
     }
 }

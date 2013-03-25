@@ -23,6 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:label="@string/Acercade" android:name="AcercaDe"></activity>
     </application>
 
 </manifest>

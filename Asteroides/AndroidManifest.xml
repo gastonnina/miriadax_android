@@ -27,6 +27,8 @@
         </activity>
         <activity android:label="@string/Preferencias" android:name="Preferencias" android:theme="@android:style/Theme.Dialog">
         </activity>
+        <activity android:label="@string/Puntuaciones" android:name="Puntuaciones" android:theme="@android:style/Theme.Dialog">
+        </activity>
     </application>
 
 </manifest>

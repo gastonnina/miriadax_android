@@ -31,6 +31,6 @@
 
     <Button android:id="@+id/Button04"
           style="@style/TextoAsteroides.Botones"
-          android:text="@string/Salir"/>
+          android:text="@string/Puntuaciones"/>
 
 </LinearLayout>

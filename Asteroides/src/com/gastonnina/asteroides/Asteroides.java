@@ -12,7 +12,7 @@ import android.widget.Button;
 
 public class Asteroides extends Activity {
 
-    private Button bAcercaDe, bSalir, bPreferencias;
+    private Button bAcercaDe, bSalir, bPreferencias, bPuntuaciones;
     public static AlmacenPuntuaciones almacen = new AlmacenPuntuacionesArray();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +35,18 @@ public class Asteroides extends Activity {
                 lanzarAcercaDe(null);
             }
         });
+        /**
         bSalir = (Button) findViewById(R.id.Button04);
         bSalir.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 finish();
+            }
+        });
+        /**/
+        bPuntuaciones = (Button) findViewById(R.id.Button04);
+        bPuntuaciones.setOnClickListener(new OnClickListener() {
+            public void onClick(View view) {
+            	lanzarPuntuaciones(null);
             }
         });
         

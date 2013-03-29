@@ -25,9 +25,9 @@
         </activity>
         <activity android:label="@string/Acercade" android:name="AcercaDe" android:theme="@android:style/Theme.Dialog">
         </activity>
-        <activity android:label="@string/Preferencias" android:name="Preferencias" android:theme="@android:style/Theme.Dialog">
+        <activity android:label="@string/Preferencias" android:name="Preferencias" android:theme="@android:style/Theme.Black.NoTitleBar">
         </activity>
-        <activity android:label="@string/Puntuaciones" android:name="Puntuaciones" android:theme="@android:style/Theme.Dialog">
+        <activity android:label="@string/Puntuaciones" android:name="Puntuaciones" android:theme="@android:style/Theme.Black.NoTitleBar">
         </activity>
     </application>
 

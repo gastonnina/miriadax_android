@@ -29,7 +29,7 @@
         </activity>
         <activity android:label="@string/Puntuaciones" android:name="Puntuaciones" android:theme="@android:style/Theme.Black.NoTitleBar">
         </activity>
-        <activity android:label="@string/Juego" android:name="Juego" android:theme="@android:style/Theme.Black.NoTitleBar">
+        <activity android:label="@string/Juego" android:name="Juego" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" android:screenOrientation="landscape">
         </activity>
     </application>
 

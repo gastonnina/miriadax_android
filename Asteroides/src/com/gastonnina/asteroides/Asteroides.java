@@ -12,7 +12,7 @@ import android.widget.Button;
 
 public class Asteroides extends Activity {
 
-    private Button bAcercaDe, bSalir, bPreferencias, bPuntuaciones;
+    private Button bAcercaDe, bSalir, bPreferencias, bPuntuaciones, bJugar;
     public static AlmacenPuntuaciones almacen = new AlmacenPuntuacionesArray();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +21,13 @@ public class Asteroides extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+    
+        bJugar = (Button) findViewById(R.id.Button01);
+        bJugar.setOnClickListener(new OnClickListener() {
+            public void onClick(View view) {
+            	lanzarJuego(null);
+            }
+        });
         
         bPreferencias = (Button) findViewById(R.id.Button02);
         bPreferencias.setOnClickListener(new OnClickListener() {
@@ -88,6 +95,10 @@ public class Asteroides extends Activity {
     }
     public void lanzarPuntuaciones(View view) {
     	Intent i = new Intent(this, Puntuaciones.class);
+    	startActivity(i);
+	}
+    public void lanzarJuego(View view) {
+    	Intent i = new Intent(this, Juego.class);
     	startActivity(i);
 	}
 }

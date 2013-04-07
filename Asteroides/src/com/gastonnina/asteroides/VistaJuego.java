@@ -21,6 +21,14 @@ public class VistaJuego extends View {
     private Vector<Grafico> Asteroides; // Vector con los Asteroides
     private int numAsteroides = 5; // Número inicial de asteroides
     private int numFragmentos = 3; // Fragmentos en que se divide
+    
+    // //// THREAD Y TIEMPO //////
+    // Thread encargado de procesar el juego
+    private ThreadJuego thread = new ThreadJuego();
+    // Cada cuanto queremos procesar cambios (ms)
+    private static int PERIODO_PROCESO = 50;
+    // Cuando se realizó el último proceso
+    private long ultimoProceso = 0;
 
     public VistaJuego(Context context, AttributeSet attrs) {
 
@@ -63,6 +71,41 @@ public class VistaJuego extends View {
         
         nave.setPosX((ancho/2) - nave.getAncho());
         nave.setPosY((alto/2) - nave.getAlto());
+        
+        ultimoProceso = System.currentTimeMillis();
+        thread.start();
+    }
+    
+    protected void actualizaFisica() {
+        long ahora = System.currentTimeMillis();
+        // No hagas nada si el período de proceso no se ha cumplido.
+        if (ultimoProceso + PERIODO_PROCESO > ahora) {
+            return;
+        }
+
+        // Para una ejecución en tiempo real calculamos retardo           
+        double retardo = (ahora - ultimoProceso) / PERIODO_PROCESO;
+        ultimoProceso = ahora; // Para la próxima vez
+
+        // Actualizamos velocidad y dirección de la nave a partir de 
+        // giroNave y aceleracionNave (según la entrada del jugador)
+        nave.setAngulo((int) (nave.getAngulo() + giroNave * retardo));
+        double nIncX = nave.getIncX() + aceleracionNave
+                * Math.cos(Math.toRadians(nave.getAngulo())) * retardo;
+        double nIncY = nave.getIncY() + aceleracionNave
+                * Math.sin(Math.toRadians(nave.getAngulo())) * retardo;
+
+        // Actualizamos si el módulo de la velocidad no excede el máximo
+        if (Math.hypot(nIncX, nIncY) <= Grafico.getMaxVelocidad()) {
+            nave.setIncX(nIncX);
+            nave.setIncY(nIncY);
+        }
+
+        // Actualizamos posiciones X e Y
+        nave.incrementaPos(retardo);
+        for (Grafico asteroide : Asteroides) {
+            asteroide.incrementaPos(retardo);
+        }
     }
 
     @Override
@@ -72,5 +115,14 @@ public class VistaJuego extends View {
             asteroide.dibujaGrafico(canvas);
         }
         nave.dibujaGrafico(canvas);
+    }
+    class ThreadJuego extends Thread {
+
+        @Override
+        public void run() {
+            while (true) {
+                actualizaFisica();
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class VistaJuego extends View {
@@ -30,6 +31,9 @@ public class VistaJuego extends View {
     // Cuando se realizó el último proceso
     private long ultimoProceso = 0;
 
+    private float mX=0, mY=0;
+    private boolean disparo=false;
+    
     public VistaJuego(Context context, AttributeSet attrs) {
 
         super(context, attrs);
@@ -76,7 +80,7 @@ public class VistaJuego extends View {
         thread.start();
     }
     
-    protected void actualizaFisica() {
+    protected synchronized void actualizaFisica() {
         long ahora = System.currentTimeMillis();
         // No hagas nada si el período de proceso no se ha cumplido.
         if (ultimoProceso + PERIODO_PROCESO > ahora) {
@@ -109,13 +113,48 @@ public class VistaJuego extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         for (Grafico asteroide : Asteroides) {
             asteroide.dibujaGrafico(canvas);
         }
         nave.dibujaGrafico(canvas);
     }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        float x = event.getX();
+        float y = event.getY();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                disparo = true;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float dx = Math.abs(x - mX);
+                float dy = Math.abs(y - mY);
+                if (dy < 6 && dx > 6) {
+                    giroNave = Math.round((x - mX) / 2);
+                    disparo = false;
+                } else if (dx < 6 && dy > 6) {
+                    aceleracionNave = Math.round((mY - y) / 25);
+                    disparo = false;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                giroNave = 0;
+                aceleracionNave = 0;
+                if (disparo) {
+                    //ActivaMisil();
+                }
+                break;
+        }
+        mX = x;
+        mY = y;
+        return true;
+    }
+    
     class ThreadJuego extends Thread {
 
         @Override

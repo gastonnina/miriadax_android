@@ -1,15 +1,22 @@
 package com.gastonnina.asteroides;
 
+import java.util.List;
 import java.util.Vector;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.support.v4.util.LogWriter;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class VistaJuego extends View {
+public class VistaJuego extends View implements SensorEventListener{
     // //// NAVE //////
     private Grafico nave;// Gráfico de la nave
     private int giroNave; // Incremento de dirección
@@ -56,6 +63,17 @@ public class VistaJuego extends View {
             Asteroides.add(asteroide);
         }
         nave = new Grafico(this, drawableNave);
+        
+        SensorManager mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+
+        List<Sensor> listSensors = mSensorManager.getSensorList(
+                Sensor.TYPE_ORIENTATION);
+
+        if (!listSensors.isEmpty()) {
+            Sensor orientationSensor = listSensors.get(0);
+            mSensorManager.registerListener(this, orientationSensor,
+                    SensorManager.SENSOR_DELAY_GAME);
+        }
     }
 
     @Override
@@ -153,6 +171,31 @@ public class VistaJuego extends View {
         mX = x;
         mY = y;
         return true;
+    }
+    
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+    private boolean hayValorInicial = false;
+    private float valorInicial;
+    private float valorInicialZ;
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float valor = event.values[1];
+        float valor_x = event.values[0];
+        float valor_z = event.values[2];
+        /*Log.v("VARIABLES", "valor_x=" + valor_x);
+        Log.v("VARIABLES", "valor_y=" + valor);
+        Log.v("VARIABLES", "valor_z=" + valor_z);*/
+        if (!hayValorInicial) {
+            valorInicial = valor;
+            valorInicialZ = valor_z;
+            hayValorInicial = true;
+        }
+        giroNave = (int) (valor - valorInicial) / 3;
+        aceleracionNave = (int) (valor_z-valorInicialZ)/3;//FIXME
+        
     }
     
     class ThreadJuego extends Thread {

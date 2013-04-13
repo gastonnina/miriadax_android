@@ -10,7 +10,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.v4.util.LogWriter;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -41,6 +40,12 @@ public class VistaJuego extends View implements SensorEventListener{
     private float mX=0, mY=0;
     private boolean disparo=false;
     
+    // //// MISIL //////
+    private Grafico misil;
+    private static int PASO_VELOCIDAD_MISIL = 12;
+    private boolean misilActivo = false;
+    private int tiempoMisil;
+    
     public VistaJuego(Context context, AttributeSet attrs) {
 
         super(context, attrs);
@@ -51,6 +56,8 @@ public class VistaJuego extends View implements SensorEventListener{
                 R.drawable.asteroide1);
         drawableNave = context.getResources().getDrawable(
                 R.drawable.nave);
+        drawableMisil = context.getResources().getDrawable(
+        		R.drawable.misil1);
 
         Asteroides = new Vector<Grafico>();
         
@@ -63,6 +70,7 @@ public class VistaJuego extends View implements SensorEventListener{
             Asteroides.add(asteroide);
         }
         nave = new Grafico(this, drawableNave);
+        misil = new Grafico(this, drawableMisil);
         
         SensorManager mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 
@@ -74,6 +82,15 @@ public class VistaJuego extends View implements SensorEventListener{
             mSensorManager.registerListener(this, orientationSensor,
                     SensorManager.SENSOR_DELAY_GAME);
         }
+        
+        /**
+        ShapeDrawable dMisil = new ShapeDrawable(new RectShape());
+        dMisil.getPaint().setColor(Color.WHITE);
+        dMisil.getPaint().setStyle(Style.STROKE);
+        dMisil.setIntrinsicWidth(15);
+        dMisil.setIntrinsicHeight(3);
+        drawableMisil = dMisil;
+        /**/
     }
 
     @Override
@@ -128,6 +145,25 @@ public class VistaJuego extends View implements SensorEventListener{
         for (Grafico asteroide : Asteroides) {
             asteroide.incrementaPos(retardo);
         }
+        
+        // Actualizamos posición de misil
+        
+        Log.i("MISIL-1","bandera misil-->"+misilActivo);
+        if (misilActivo) {
+        	Log.i("MISIL-1","Dentro HILO");
+            misil.incrementaPos(retardo);
+            tiempoMisil -= retardo;
+            if (tiempoMisil < 0) {
+                misilActivo = false;
+            } else {
+                for (int i = 0; i < Asteroides.size(); i++) {
+                    if (misil.verificaColision(Asteroides.elementAt(i))) {
+                        destruyeAsteroide(i);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -137,6 +173,8 @@ public class VistaJuego extends View implements SensorEventListener{
             asteroide.dibujaGrafico(canvas);
         }
         nave.dibujaGrafico(canvas);
+        if (misilActivo)
+        	 misil.dibujaGrafico(canvas);
     }
     
     @Override
@@ -164,7 +202,8 @@ public class VistaJuego extends View implements SensorEventListener{
                 giroNave = 0;
                 aceleracionNave = 0;
                 if (disparo) {
-                    //ActivaMisil();
+                	Log.i("MISIL", "PASO 1");
+                    ActivaMisil();
                 }
                 break;
         }
@@ -196,6 +235,25 @@ public class VistaJuego extends View implements SensorEventListener{
         giroNave = (int) (valor - valorInicial) / 3;
         aceleracionNave = (int) (valor_z-valorInicialZ)/3;//FIXME
         
+    }
+    
+    private void destruyeAsteroide(int i) {
+        Asteroides.remove(i);
+        misilActivo = false;
+    }
+
+    private void ActivaMisil() {
+    	Log.i("MISIL","Dentro del misil");
+        misil.setPosX(nave.getPosX() + nave.getAncho() / 2 - misil.getAncho() / 2);
+        misil.setPosY(nave.getPosY() + nave.getAlto() / 2 - misil.getAlto() / 2);
+        misil.setAngulo(nave.getAngulo());
+        misil.setIncX(Math.cos(Math.toRadians(misil.getAngulo()))
+                * PASO_VELOCIDAD_MISIL);
+        misil.setIncY(Math.sin(Math.toRadians(misil.getAngulo()))
+                * PASO_VELOCIDAD_MISIL);
+        tiempoMisil = (int) Math.min(this.getWidth() / Math.abs(misil.
+getIncX()), this.getHeight() / Math.abs(misil.getIncY())) - 2;
+        misilActivo = true;
     }
     
     class ThreadJuego extends Thread {

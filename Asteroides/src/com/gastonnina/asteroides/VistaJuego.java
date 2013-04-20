@@ -45,6 +45,7 @@ public class VistaJuego extends View implements SensorEventListener{
     private static int PASO_VELOCIDAD_MISIL = 12;
     private boolean misilActivo = false;
     private int tiempoMisil;
+
     
     public VistaJuego(Context context, AttributeSet attrs) {
 
@@ -116,6 +117,7 @@ public class VistaJuego extends View implements SensorEventListener{
     }
     
     protected synchronized void actualizaFisica() {
+    	
         long ahora = System.currentTimeMillis();
         // No hagas nada si el período de proceso no se ha cumplido.
         if (ultimoProceso + PERIODO_PROCESO > ahora) {
@@ -257,12 +259,44 @@ getIncX()), this.getHeight() / Math.abs(misil.getIncY())) - 2;
     }
     
     class ThreadJuego extends Thread {
+        
+        private boolean pausa, corriendo;
+
+        public synchronized void pausar() {
+            pausa = true;
+        }
+
+        public synchronized void reanudar() {
+            pausa = false;
+            notify();
+        }
+
+        public void detener() {
+            corriendo = false;
+            if (pausa) {
+                reanudar();
+            }
+        }
 
         @Override
         public void run() {
-            while (true) {
+            corriendo = true;
+            while (corriendo) {
                 actualizaFisica();
+                synchronized (this) {
+                    while (pausa) {
+                        try {
+                            wait();
+                        } catch (Exception e) {
+                        }
+                    }
+                }
             }
         }
     }
+
+	public ThreadJuego getThread() {
+		return thread;
+	}
+    
 }

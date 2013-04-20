@@ -2,6 +2,7 @@ package com.gastonnina.asteroides;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,19 +10,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class Asteroides extends Activity {
-
+	private VistaJuego vistaJuego;
+	public MediaPlayer mp;
+	
     private Button bAcercaDe, bSalir, bPreferencias, bPuntuaciones, bJugar;
     public static AlmacenPuntuaciones almacen = new AlmacenPuntuacionesArray();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-    	   
-
+    	
+    	Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-    
+
+        mp = MediaPlayer.create(this, R.raw.audio);
+        mp.start();
+        
         bJugar = (Button) findViewById(R.id.Button01);
         bJugar.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
@@ -56,9 +63,46 @@ public class Asteroides extends Activity {
             	lanzarPuntuaciones(null);
             }
         });
-        
+        vistaJuego = (VistaJuego) findViewById(R.id.VistaJuego);
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Toast.makeText(this, "onStart", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
+        mp.start();
+    }
+
+    @Override
+    protected void onPause() {
+        Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
+
+        super.onPause();
+        mp.pause();
+    }
+
+    @Override
+    protected void onStop() {
+        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
+        super.onStop();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Toast.makeText(this, "onRestart", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Toast.makeText(this, "onDestroy", Toast.LENGTH_SHORT).show();
+        super.onDestroy();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);

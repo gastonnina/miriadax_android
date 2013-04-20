@@ -14,6 +14,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 public class VistaJuego extends View implements SensorEventListener{
     // //// NAVE //////
@@ -45,20 +46,17 @@ public class VistaJuego extends View implements SensorEventListener{
     private static int PASO_VELOCIDAD_MISIL = 12;
     private boolean misilActivo = false;
     private int tiempoMisil;
-
-    
+    private SensorManager mSensorManager;
+    private Sensor orientationSensor;
     public VistaJuego(Context context, AttributeSet attrs) {
 
         super(context, attrs);
 
         Drawable drawableNave, drawableAsteroide, drawableMisil;
 
-        drawableAsteroide = context.getResources().getDrawable(
-                R.drawable.asteroide1);
-        drawableNave = context.getResources().getDrawable(
-                R.drawable.nave);
-        drawableMisil = context.getResources().getDrawable(
-        		R.drawable.misil1);
+        drawableAsteroide = context.getResources().getDrawable(R.drawable.asteroide1);
+        drawableNave = context.getResources().getDrawable(R.drawable.nave);
+        drawableMisil = context.getResources().getDrawable(R.drawable.misil1);
 
         Asteroides = new Vector<Grafico>();
         
@@ -73,15 +71,13 @@ public class VistaJuego extends View implements SensorEventListener{
         nave = new Grafico(this, drawableNave);
         misil = new Grafico(this, drawableMisil);
         
-        SensorManager mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 
-        List<Sensor> listSensors = mSensorManager.getSensorList(
-                Sensor.TYPE_ORIENTATION);
+        List<Sensor> listSensors = mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
 
         if (!listSensors.isEmpty()) {
-            Sensor orientationSensor = listSensors.get(0);
-            mSensorManager.registerListener(this, orientationSensor,
-                    SensorManager.SENSOR_DELAY_GAME);
+            orientationSensor = listSensors.get(0);
+            activaSensor();
         }
         
         /**
@@ -93,7 +89,7 @@ public class VistaJuego extends View implements SensorEventListener{
         drawableMisil = dMisil;
         /**/
     }
-
+    
     @Override
     protected void onSizeChanged(int ancho, int alto,
             int ancho_anter, int alto_anter) {
@@ -131,10 +127,8 @@ public class VistaJuego extends View implements SensorEventListener{
         // Actualizamos velocidad y dirección de la nave a partir de 
         // giroNave y aceleracionNave (según la entrada del jugador)
         nave.setAngulo((int) (nave.getAngulo() + giroNave * retardo));
-        double nIncX = nave.getIncX() + aceleracionNave
-                * Math.cos(Math.toRadians(nave.getAngulo())) * retardo;
-        double nIncY = nave.getIncY() + aceleracionNave
-                * Math.sin(Math.toRadians(nave.getAngulo())) * retardo;
+        double nIncX = nave.getIncX() + aceleracionNave * Math.cos(Math.toRadians(nave.getAngulo())) * retardo;
+        double nIncY = nave.getIncY() + aceleracionNave * Math.sin(Math.toRadians(nave.getAngulo())) * retardo;
 
         // Actualizamos si el módulo de la velocidad no excede el máximo
         if (Math.hypot(nIncX, nIncY) <= Grafico.getMaxVelocidad()) {
@@ -249,15 +243,20 @@ public class VistaJuego extends View implements SensorEventListener{
         misil.setPosX(nave.getPosX() + nave.getAncho() / 2 - misil.getAncho() / 2);
         misil.setPosY(nave.getPosY() + nave.getAlto() / 2 - misil.getAlto() / 2);
         misil.setAngulo(nave.getAngulo());
-        misil.setIncX(Math.cos(Math.toRadians(misil.getAngulo()))
-                * PASO_VELOCIDAD_MISIL);
-        misil.setIncY(Math.sin(Math.toRadians(misil.getAngulo()))
-                * PASO_VELOCIDAD_MISIL);
-        tiempoMisil = (int) Math.min(this.getWidth() / Math.abs(misil.
-getIncX()), this.getHeight() / Math.abs(misil.getIncY())) - 2;
+        misil.setIncX(Math.cos(Math.toRadians(misil.getAngulo())) * PASO_VELOCIDAD_MISIL);
+        misil.setIncY(Math.sin(Math.toRadians(misil.getAngulo())) * PASO_VELOCIDAD_MISIL);
+        tiempoMisil = (int) Math.min(this.getWidth() / Math.abs(misil.getIncX()), this.getHeight() / Math.abs(misil.getIncY())) - 2;
         misilActivo = true;
     }
-    
+    public void activaSensor() {
+        if (mSensorManager!=null && orientationSensor!=null)
+            mSensorManager.registerListener(this, orientationSensor,SensorManager.SENSOR_DELAY_GAME);
+	}
+    	
+    public void desactivaSensor() {
+        if (mSensorManager!=null)
+            mSensorManager.unregisterListener(this);
+	}
     class ThreadJuego extends Thread {
         
         private boolean pausa, corriendo;

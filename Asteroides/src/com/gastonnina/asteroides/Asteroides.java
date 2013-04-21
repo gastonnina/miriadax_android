@@ -25,6 +25,8 @@ public class Asteroides extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        startService(new Intent(Asteroides.this,ServicioMusica.class));
 
         mp = MediaPlayer.create(this, R.raw.audio);
         mp.start();
@@ -120,6 +122,7 @@ public class Asteroides extends Activity {
     @Override
     protected void onDestroy() {
         Toast.makeText(this, "onDestroy", Toast.LENGTH_SHORT).show();
+        stopService(new Intent(Asteroides.this, ServicioMusica.class));
         super.onDestroy();
     }
     @Override
